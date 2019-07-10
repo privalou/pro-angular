@@ -4,6 +4,7 @@ import {Product} from '../model/product.model';
 import {Model} from '../model/repository.model';
 import {MODES, SHARED_STATE, SharedState} from './sharedState.model';
 import {Observable} from 'rxjs';
+import {distinctUntilChanged, skipWhile} from 'rxjs/operators';
 
 @Component({
   selector: 'paForm',
@@ -15,13 +16,18 @@ export class FormComponent {
 
   constructor(private model: Model,
               @Inject(SHARED_STATE) private stateEvents: Observable<SharedState>) {
-    stateEvents.subscribe((update) => {
-      this.product = new Product();
-      if (update.id !== undefined) {
-        Object.assign(this.product, this.model.getProduct(update.id));
-      }
-      this.editing = update.mode === MODES.EDIT;
-    });
+    stateEvents
+      .pipe(skipWhile(state => state.mode === MODES.EDIT))
+      .pipe(distinctUntilChanged((firstState, secondState) =>
+        firstState.mode === secondState.mode
+        && firstState.id === secondState.id))
+      .subscribe(update => {
+        this.product = new Product();
+        if (update.id !== undefined) {
+          Object.assign(this.product, this.model.getProduct(update.id));
+        }
+        this.editing = update.mode === MODES.EDIT;
+      });
   }
 
   editing = false;
