@@ -14,11 +14,13 @@ export class FormComponent {
 
   constructor(private model: Model, activeRoute: ActivatedRoute,
               private router: Router) {
-    this.editing = activeRoute.snapshot.params.mode === 'edit';
-    const id = activeRoute.snapshot.params.id;
-    if (id != null) {
-      Object.assign(this.product, model.getProduct(id) || new Product());
-    }
+    activeRoute.params.subscribe(params => {
+      this.editing = params.mode === 'edit';
+      const id = params.id;
+      if (id != null) {
+        Object.assign(this.product, model.getProduct(id) || new Product());
+      }
+    });
   }
 
   editing = false;
