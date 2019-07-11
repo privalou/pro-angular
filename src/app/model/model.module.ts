@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
 import {Model} from './repository.model';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
 import {REST_URL, RestDataSource} from './rest.datasource';
+import {ModelResolver} from './model.resolver';
 
 @NgModule({
-  imports: [HttpClientModule],
-  providers: [Model, RestDataSource,
-    {provide: REST_URL, useValue: `http://${location.hostname}:3500/products`}]
+  imports: [HttpClientModule, HttpClientJsonpModule], providers: [Model, RestDataSource, ModelResolver,
+    {provide: REST_URL, useValue: 'http://localhost:3500/products'}]
 })
 export class ModelModule {
 }
