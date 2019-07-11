@@ -5,10 +5,13 @@ import {NotFoundComponent} from './core/notFound.component';
 import {ProductCountComponent} from './core/productCount.component';
 import {CategoryCountComponent} from './core/categoryCount.component';
 import {ModelResolver} from './model/model.resolver';
+import {TermsGuard} from './terms.guard';
+import {UnsavedGuard} from './core/unsaved.guard';
 
 const childRoutes: Routes = [
   {
     path: '',
+    canActivateChild: [TermsGuard],
     children: [{path: 'products', component: ProductCountComponent},
       {path: 'categories', component: CategoryCountComponent},
       {path: '', component: ProductCountComponent}],
@@ -17,7 +20,16 @@ const childRoutes: Routes = [
 ];
 
 const routes: Routes = [
-  {path: 'form/:mode/:id', component: FormComponent},
+  {
+    path: 'form/:mode/:id', component: FormComponent,
+    resolve: {model: ModelResolver},
+    canDeactivate: [UnsavedGuard]
+  },
+  {
+    path: 'form/:mode', component: FormComponent,
+    resolve: {model: ModelResolver},
+    canActivate: [TermsGuard]
+  },
   {path: 'form/:mode', component: FormComponent},
   {path: 'table', component: TableComponent, children: childRoutes},
   {path: 'table/:category', component: TableComponent, children: childRoutes},
