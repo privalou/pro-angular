@@ -1,20 +1,29 @@
-import {ChangeDetectorRef, Component, KeyValueDiffer, KeyValueDiffers} from '@angular/core';
+import {ChangeDetectorRef, Component, DoCheck, KeyValueDiffer, KeyValueDiffers, OnInit} from '@angular/core';
 import {Model} from '../model/repository.model';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
-  selector: 'pa-productCount',
+  selector: 'pa-product-count',
   template: `
     <div class="bg-info text-white p-2">There are
       {{count}} products
     </div>`
 })
-export class ProductCountComponent {
+export class ProductCountComponent implements OnInit, DoCheck {
   private differ: KeyValueDiffer<any, any>;
   count = 0;
+  private category: string;
 
   constructor(private model: Model,
               private keyValueDiffers: KeyValueDiffers,
-              private changeDetector: ChangeDetectorRef) {
+              private changeDetector: ChangeDetectorRef,
+              activeRoute: ActivatedRoute) {
+    activeRoute.pathFromRoot.forEach(route => route.params.subscribe(params => {
+      if (params.category != null) {
+        this.category = params.category;
+        this.updateCount();
+      }
+    }));
   }
 
   ngOnInit() {
@@ -30,6 +39,9 @@ export class ProductCountComponent {
   }
 
   private updateCount() {
-    this.count = this.model.getProducts().length;
+    this.count = this.model.getProducts()
+      .filter(p => this.category == null || p.category === this.category)
+      .length;
   }
 }
+
