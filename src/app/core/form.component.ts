@@ -17,17 +17,7 @@ export class FormComponent {
     this.editing = activeRoute.snapshot.params.mode === 'edit';
     const id = activeRoute.snapshot.params.id;
     if (id != null) {
-      const name = activeRoute.snapshot.params.name;
-      const category = activeRoute.snapshot.params.category;
-      const price = activeRoute.snapshot.params.price;
-      if (name != null && category != null && price != null) {
-        this.product.id = id;
-        this.product.name = name;
-        this.product.category = category;
-        this.product.price = Number.parseFloat(price);
-      } else {
-        Object.assign(this.product, model.getProduct(id) || new Product());
-      }
+      Object.assign(this.product, model.getProduct(id) || new Product());
     }
   }
 
