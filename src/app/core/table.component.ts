@@ -5,7 +5,7 @@ import {MODES, SHARED_STATE, SharedState} from './sharedState.model';
 import {Observer} from 'rxjs';
 
 @Component({
-  selector: 'paTable',
+  selector: 'pa-table',
   templateUrl: 'table.component.html'
 })
 export class TableComponent {
