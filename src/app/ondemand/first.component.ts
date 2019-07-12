@@ -1,9 +1,26 @@
-import {Component} from '@angular/core';
+import {Component, HostListener} from '@angular/core';
+import {Product} from '../model/product.model';
+import {Model} from '../model/repository.model';
 
 @Component({
   selector: 'pa-first',
-  template: `
-    <div class="bg-primary text-white p-2">First Component</div>`
+  templateUrl: 'first.component.html'
 })
 export class FirstComponent {
+  constructor(private repository: Model) {
+  }
+
+  category = 'Soccer';
+  highlighted = false;
+
+  getProducts(): Product[] {
+    return this.repository.getProducts()
+      .filter(p => p.category === this.category);
+  }
+
+  @HostListener('mouseenter', ['$event.type'])
+  @HostListener('mouseleave', ['$event.type'])
+  setHighlight(type: string) {
+    this.highlighted = type === 'mouseenter';
+  }
 }
