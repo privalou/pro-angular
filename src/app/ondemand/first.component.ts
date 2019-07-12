@@ -1,26 +1,35 @@
-import {Component, HostListener} from '@angular/core';
+import {Component} from '@angular/core';
 import {Product} from '../model/product.model';
-import {Model} from '../model/repository.model';
+import {RestDataSource} from '../model/rest.datasource';
 
 @Component({
   selector: 'pa-first',
   templateUrl: 'first.component.html'
 })
 export class FirstComponent {
-  constructor(private repository: Model) {
-  }
-
-  category = 'Soccer';
+  _category = 'Soccer';
+  _products: Product[] = [];
   highlighted = false;
 
-  getProducts(): Product[] {
-    return this.repository.getProducts()
-      .filter(p => p.category === this.category);
+  constructor(public datasource: RestDataSource) {
   }
 
-  @HostListener('mouseenter', ['$event.type'])
-  @HostListener('mouseleave', ['$event.type'])
-  setHighlight(type: string) {
-    this.highlighted = type === 'mouseenter';
+  ngOnInit() {
+    this.updateData();
+  }
+
+  getProducts(): Product[] {
+    return this._products;
+  }
+
+  set category(newValue: string) {
+    this._category;
+    this.updateData();
+  }
+
+  updateData() {
+    this.datasource.getData()
+      .subscribe(data => this._products = data
+        .filter(p => p.category === this._category));
   }
 }
